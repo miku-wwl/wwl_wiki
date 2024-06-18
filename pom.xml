@@ -8,7 +8,7 @@
         <version>3.0.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.jiawa</groupId>
+    <groupId>com.weilai</groupId>
     <artifactId>wiki</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>wiki</name>
