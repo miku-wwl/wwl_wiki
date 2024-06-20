@@ -50,7 +50,6 @@
         <a-input v-model:value="ebook.desc" type="textarea"/>
       </a-form-item>
     </a-form>
-    <p>test</p>
   </a-modal>
 </template>
 
@@ -133,12 +132,6 @@ export default defineComponent({
         size: pagination.pageSize
       });
     };
-    onMounted(() => {
-      handleQuery({
-        page: 1,
-        size: pagination.value.pageSize
-      });
-    });
 
     // -------- 表单 ---------
     const ebook = ref({});
@@ -146,10 +139,19 @@ export default defineComponent({
     const modalLoading = ref(false);
     const handleModalOk = () => {
       modalLoading.value = true;
-      setTimeout(() => {
-        modalVisible.value = false;
-        modalLoading.value = false;
-      }, 2000);
+      axios.post("/ebook/save", ebook.value).then((response) => {
+        const data = response.data; // data = commonResp
+        if (data.success) {
+          modalVisible.value = false;
+          modalLoading.value = false;
+          // 重新加载列表
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize,
+          });
+        }
+        ebooks.value = data.content.list;
+      });
     };
 
     /**
@@ -159,6 +161,12 @@ export default defineComponent({
       modalVisible.value = true;
       ebook.value = record
     };
+    onMounted(() => {
+      handleQuery({
+        page: 1,
+        size: pagination.value.pageSize
+      });
+    });
 
     return {
       ebooks,

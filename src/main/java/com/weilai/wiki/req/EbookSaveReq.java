@@ -1,6 +1,6 @@
-package com.weilai.wiki.resp;
+package com.weilai.wiki.req;
 
-public class EbookResp {
+public class EbookSaveReq {
     private Long id;
 
     private String name;
