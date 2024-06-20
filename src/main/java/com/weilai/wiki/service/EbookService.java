@@ -10,6 +10,7 @@ import com.weilai.wiki.req.EbookSaveReq;
 import com.weilai.wiki.resp.EbookQueryResp;
 import com.weilai.wiki.resp.PageResp;
 import com.weilai.wiki.util.CopyUtil;
+import com.weilai.wiki.util.SnowFlake;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,9 @@ public class EbookService {
 
     @Resource
     private EbookMapper ebookMapper;
+
+    @Resource
+    private SnowFlake snowFlake;
 
     public PageResp<EbookQueryResp> list(EbookQueryReq req) {
         EbookExample ebookExample = new EbookExample();
@@ -63,7 +67,8 @@ public class EbookService {
         Ebook ebook = CopyUtil.copy(req, Ebook.class);
         if (ObjectUtils.isEmpty(req.getId())) {
             // 新增
-            ebookMapper.insert(ebook);
+            ebook.setId(snowFlake.nextId());
+            ebookMapper.insertSelective(ebook);
         } else {
             // 更新
             ebookMapper.updateByPrimaryKey(ebook);
