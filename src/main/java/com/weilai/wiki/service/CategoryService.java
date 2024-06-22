@@ -33,6 +33,9 @@ public class CategoryService {
     public PageResp<CategoryQueryResp> list(CategoryQueryReq req) {
         CategoryExample categoryExample = new CategoryExample();
         CategoryExample.Criteria criteria = categoryExample.createCriteria();
+        if (!ObjectUtils.isEmpty(req.getName())) {
+            criteria.andNameLike("%" + req.getName() + "%");
+        }
 
         // 支持分页，且只对遇到的第一个select起作用
         PageHelper.startPage(req.getPage(), req.getSize());
@@ -83,7 +86,7 @@ public class CategoryService {
     /**
      * 删除
      *
-     * @param req
+     * @param id
      */
     public void delete(Long id) {
         categoryMapper.deleteByPrimaryKey(id);
