@@ -12,7 +12,7 @@ importers:
         specifier: ^5.1.8
         version: 5.1.9(vue@3.4.29(typescript@4.1.6))
       ant-design-vue:
-        specifier: ^2.0.0-rc.3
+        specifier: ^2.2.2
         version: 2.2.8(@vue/compiler-sfc@3.4.29)(vue@3.4.29(typescript@4.1.6))
       axios:
         specifier: ^0.21.1
