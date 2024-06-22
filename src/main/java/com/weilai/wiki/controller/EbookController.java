@@ -7,6 +7,7 @@ import com.weilai.wiki.resp.EbookQueryResp;
 import com.weilai.wiki.resp.PageResp;
 import com.weilai.wiki.service.EbookService;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,7 +17,7 @@ public class EbookController {
     private EbookService ebookService;
 
     @GetMapping("/list")
-    public CommonResp list(EbookQueryReq req) {
+    public CommonResp list(@Valid EbookQueryReq req) {
         CommonResp<PageResp<EbookQueryResp>> resp = new CommonResp<>();
         PageResp<EbookQueryResp> list = ebookService.list(req);
         resp.setContent(list);
