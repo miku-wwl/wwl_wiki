@@ -137,6 +137,8 @@ export default defineComponent({
      **/
     const handleQuery = (params: any) => {
       loading.value = true;
+      // 如果不清空现有数据，则编辑保存重新加载数据后，再点编辑，则列表显示的还是编辑前的数据
+      ebooks.value = [];
       axios.get("/ebook/list", {
         params: {
           page: params.page,
@@ -226,7 +228,7 @@ export default defineComponent({
       })
     }
     const level1 = ref();
-    var categorys: any;
+    let categorys: any;
     /**
      * 查询所有分类
      **/
@@ -250,14 +252,19 @@ export default defineComponent({
     const getCategoryName = (cid: number) => {
       // console.log(cid)
       let result = "";
-      categorys.forEach((item: any) => {
-        if (item.id === cid) {
-          // return item.name; // 注意，这里直接return不起作用
-          result = item.name;
-        }
-      });
+      if (categorys && Array.isArray(categorys)) {
+        categorys.forEach((item: any) => {
+          if (item.id === cid) {
+            // return item.name; // 注意，这里直接return不起作用
+            result = item.name;
+          }
+        });
+      } else{
+        console.log(categorys);
+      }
       return result;
     };
+
     onMounted(() => {
       handleQueryCategory();
       handleQuery({
