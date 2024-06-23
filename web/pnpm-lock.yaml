@@ -26,6 +26,9 @@ importers:
       vuex:
         specifier: ^4.0.0-0
         version: 4.1.0(vue@3.2.20)
+      wangeditor:
+        specifier: 4.6.3
+        version: 4.6.3
     devDependencies:
       '@typescript-eslint/eslint-plugin':
         specifier: ^4.18.0
@@ -170,6 +173,10 @@ packages:
     resolution: {integrity: sha512-9uUYRm6OqQrCqQdG1iCBwBPZgN8ciDBro2nIOFaiRz1/BCxaI7CNvQbDHvsArAC7Tw9Hda/B3U+6ui9u4HWXPw==}
     engines: {node: '>=6.0.0'}
     hasBin: true
+
+  '@babel/runtime-corejs3@7.24.7':
+    resolution: {integrity: sha512-eytSX6JLBY6PVAeQa2bFlDx/7Mmln/gaEpsit5a3WEvjGfiIytEsgAwuIXCPM0xvw0v0cJn3ilq0/TvXrW0kgA==}
+    engines: {node: '>=6.9.0'}
 
   '@babel/runtime@7.24.7':
     resolution: {integrity: sha512-UwgBRMjJP+xv857DCngvqXI3Iq6J4v0wXmwc6sapg+zyhbwmQX67LUEFrkK5tbyJ30jGuG3ZvWpBiB9LCy1kWw==}
@@ -1377,6 +1384,9 @@ packages:
     engines: {node: '>= 6.9.0'}
     peerDependencies:
       webpack: ^4.0.0 || ^5.0.0
+
+  core-js-pure@3.37.1:
+    resolution: {integrity: sha512-J/r5JTHSmzTxbiYYrzXg9w1VpqrYt+gexenBE9pugeyhwPZTAEJddyiReJWsLO6uNQ8xJZFbod6XC7KKwatCiA==}
 
   core-js@3.37.1:
     resolution: {integrity: sha512-Xn6qmxrQZyB0FFY8E3bgRXei3lWDJHhvI+u0q9TKIYM49G8pAr0FgnnrFRAmsbptZL1yxRADVXn+x5AGsbBfyw==}
@@ -4602,6 +4612,9 @@ packages:
     peerDependencies:
       vue: ^3.2.0
 
+  wangeditor@4.6.3:
+    resolution: {integrity: sha512-00G+T8mi2uP/cDK2/zM650FsqSOzIPmj/yyEWa8PXtoPMOhZRLReiW1sE/XtxYmIA5/VUsY/MfMxMfppZ/8AIA==}
+
   warning@4.0.3:
     resolution: {integrity: sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==}
 
@@ -4923,6 +4936,11 @@ snapshots:
   '@babel/parser@7.24.7':
     dependencies:
       '@babel/types': 7.24.7
+
+  '@babel/runtime-corejs3@7.24.7':
+    dependencies:
+      core-js-pure: 3.37.1
+      regenerator-runtime: 0.14.1
 
   '@babel/runtime@7.24.7':
     dependencies:
@@ -6418,6 +6436,8 @@ snapshots:
       serialize-javascript: 4.0.0
       webpack: 4.47.0
       webpack-log: 2.0.0
+
+  core-js-pure@3.37.1: {}
 
   core-js@3.37.1: {}
 
@@ -10177,6 +10197,11 @@ snapshots:
     dependencies:
       '@vue/devtools-api': 6.6.3
       vue: 3.2.20
+
+  wangeditor@4.6.3:
+    dependencies:
+      '@babel/runtime': 7.24.7
+      '@babel/runtime-corejs3': 7.24.7
 
   warning@4.0.3:
     dependencies:
