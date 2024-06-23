@@ -23,6 +23,7 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
+
       <div class="welcome" v-show="isShowWelcome">
         <h1>欢迎使用Weilai Wiki</h1>
       </div>
@@ -98,29 +99,45 @@ export default defineComponent({
     };
 
     const isShowWelcome = ref(true);
-    const handleClick = (value: any) => {
-      console.log("menu click", value)
-      // if (value.key === 'welcome') {
-      //   isShowWelcome.value = true;
-      // } else {
-      //   isShowWelcome.value = false;
-      // }
-      isShowWelcome.value = value.key === 'welcome';
-    };
+    let categoryId1 = 0;
+    let categoryId2 = 0;
 
-    onMounted(() => {
-      handleQueryCategory();
+    const handleQueryEbook = () => {
       axios.get("/ebook/list", {
         params:
             {
               page: 1,
-              size: 1000
+              size: 1000,
+              categoryId1: categoryId1,
+              categoryId2: categoryId2
             }
       }).then((response) => {
         const data = response.data;
         ebooks.value = data.content.list;
         // ebooks1.books = data.content;
       });
+    };
+
+    const handleClick = (value: any) => {
+      console.log("menu click", value.key)
+      if (value.key === 'welcome') {
+        isShowWelcome.value = true;
+      } else {
+        if (value.key === 'parent') {
+          categoryId1 = value.id;
+          categoryId2 = 0;
+        } else {
+          categoryId2 = value.id;
+          categoryId1 = 0;
+        }
+        isShowWelcome.value = false;
+        handleQueryEbook();
+      }
+      // isShowWelcome.value = value.key === 'welcome';
+    };
+
+    onMounted(() => {
+      handleQueryCategory();
     });
 
     return {
@@ -141,6 +158,7 @@ export default defineComponent({
 
       handleClick,
       level1,
+
       isShowWelcome
     }
   }

@@ -36,7 +36,12 @@ public class EbookService {
         if (!ObjectUtils.isEmpty(req.getName())) {
             criteria.andNameLike("%" + req.getName() + "%");
         }
-
+        if (!ObjectUtils.isEmpty(req.getCategoryId1())) {
+            if (req.getCategoryId1() != 0)
+                criteria.andCategory1IdEqualTo(req.getCategoryId1());
+            if (req.getCategoryId2() != 0)
+                criteria.andCategory2IdEqualTo(req.getCategoryId2());
+        }
         PageHelper.startPage(req.getPage(), req.getSize());
         List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
         PageInfo<Ebook> pageInfo = new PageInfo<>(ebookList);
@@ -60,8 +65,6 @@ public class EbookService {
 
     /**
      * 保存
-     *
-     * @param req
      */
     public void save(EbookSaveReq req) {
         Ebook ebook = CopyUtil.copy(req, Ebook.class);
@@ -78,8 +81,6 @@ public class EbookService {
 
     /**
      * 删除
-     *
-     * @param id
      */
     public void delete(Long id) {
         ebookMapper.deleteByPrimaryKey(id);
