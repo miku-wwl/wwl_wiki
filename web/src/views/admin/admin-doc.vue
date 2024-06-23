@@ -3,7 +3,7 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <a-row>
+      <a-row :gutter="24">
         <a-col :span="8">
           <p>
             <a-form layout="inline" :model="param">
@@ -25,13 +25,14 @@
               :data-source="level1"
               :loading="loading"
               :pagination="false"
+              size="small"
           >
-            <template #cover="{ text: cover }">
-              <img v-if="cover" :src="cover" alt="avatar"/>
+            <template #name="{ text, record }">
+              {{ record.sort }} {{ text }}
             </template>
             <template v-slot:action="{ text, record }">
               <a-space size="small">
-                <a-button type="primary" @click="edit(record)">
+                <a-button type="primary" @click="edit(record)" size="small">
                   编辑
                 </a-button>
                 <a-popconfirm
@@ -40,7 +41,7 @@
                     cancel-text="否"
                     @confirm="handleDelete(record.id)"
                 >
-                  <a-button type="danger">
+                  <a-button type="danger" size="small">
                     删除
                   </a-button>
                 </a-popconfirm>
@@ -49,11 +50,20 @@
           </a-table>
         </a-col>
         <a-col :span="16">
-          <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-            <a-form-item label="名称">
-              <a-input v-model:value="doc.name"/>
+          <p>
+            <a-form layout="inline" :model="param">
+              <a-form-item>
+                <a-button type="primary" @click="handleSave()">
+                  保存
+                </a-button>
+              </a-form-item>
+            </a-form>
+          </p>
+          <a-form :model="doc" layout="vertical">
+            <a-form-item>
+              <a-input v-model:value="doc.name" placeholder="名称"/>
             </a-form-item>
-            <a-form-item label="父文档">
+            <a-form-item>
               <a-tree-select
                   v-model:value="doc.parent"
                   style="width: 100%"
@@ -65,15 +75,16 @@
               >
               </a-tree-select>
             </a-form-item>
-            <a-form-item label="顺序">
-              <a-input v-model:value="doc.sort"/>
+            <a-form-item>
+              <a-input v-model:value="doc.sort" placeholder="顺序"/>
             </a-form-item>
-            <a-form-item label="内容">
+            <a-form-item>
               <div id="content"></div>
             </a-form-item>
           </a-form>
         </a-col>
       </a-row>
+
     </a-layout-content>
   </a-layout>
 
@@ -86,6 +97,7 @@
   <!--  -->
   <!--</a-modal>-->
 </template>
+
 
 <script lang="ts">
 import {defineComponent, onMounted, ref, createVNode} from 'vue';
@@ -107,40 +119,17 @@ export default defineComponent({
     console.log("route.fullPath：", route.fullPath);
     console.log("route.name：", route.name);
     console.log("route.meta：", route.meta);
+
     const param = ref();
     param.value = {};
     const docs = ref();
     const loading = ref(false);
+
     const columns = [
       {
-        title: '封面',
-        dataIndex: 'cover',
-        slots: {customRender: 'cover'}
-      },
-      {
         title: '名称',
-        dataIndex: 'name'
-      },
-      {
-        title: '文档一',
-        key: 'doc1Id',
-        dataIndex: 'doc1Id'
-      },
-      {
-        title: '文档二',
-        dataIndex: 'doc2Id'
-      },
-      {
-        title: '文档数',
-        dataIndex: 'docCount'
-      },
-      {
-        title: '阅读数',
-        dataIndex: 'viewCount'
-      },
-      {
-        title: '点赞数',
-        dataIndex: 'voteCount'
+        dataIndex: 'name',
+        slots: {customRender: 'name'}
       },
       {
         title: 'Action',
@@ -148,6 +137,7 @@ export default defineComponent({
         slots: {customRender: 'action'}
       }
     ];
+
     /**
      * 一级文档树，children属性就是二级文档
      * [{
@@ -160,6 +150,7 @@ export default defineComponent({
      * }]
      */
     const level1 = ref(); // 一级文档树，children属性就是二级文档
+
     /**
      * 数据查询
      **/
@@ -170,9 +161,11 @@ export default defineComponent({
       axios.get("/doc/all").then((response) => {
         loading.value = false;
         const data = response.data;
+
         if (data.success) {
           docs.value = data.content;
           console.log("原始数组：", docs.value);
+
           level1.value = [];
           level1.value = Tool.array2Tree(docs.value, 0);
           console.log("树形结构：", level1);
@@ -181,6 +174,8 @@ export default defineComponent({
         }
       });
     };
+
+
     // -------- 表单 ---------
     // 因为树选择组件的属性状态，会随当前编辑的节点而变化，所以单独声明一个响应式变量
     const treeSelectData = ref();
@@ -189,19 +184,21 @@ export default defineComponent({
     const modalVisible = ref(false);
     const modalLoading = ref(false);
     const editor = new E('#content');
-    const handleModalOk = () => {
+    editor.config.zIndex = 0;
+
+    const handleSave = () => {
       modalLoading.value = true;
       axios.post("/doc/save", doc.value).then((response) => {
         modalLoading.value = false;
         const data = response.data; // data = commonResp
         if (data.success) {
           modalVisible.value = false;
+
           // 重新加载列表
           handleQuery();
         } else {
           message.error(data.message);
         }
-        docs.value = data.content.list;
       });
     };
 
@@ -218,6 +215,7 @@ export default defineComponent({
           console.log("disabled", node);
           // 将目标节点设置为disabled
           node.disabled = true;
+
           // 遍历所有子节点，将所有子节点全部都加上disabled
           const children = node.children;
           if (Tool.isNotEmpty(children)) {
@@ -251,6 +249,7 @@ export default defineComponent({
           // 将目标ID放入结果集ids
           deleteIds.push(id);
           deleteNames.push(node.name);
+
           // 遍历所有子节点
           const children = node.children;
           if (Tool.isNotEmpty(children)) {
@@ -278,13 +277,12 @@ export default defineComponent({
       // 不能选择当前节点及其所有子孙节点，作为父节点，会使树断开
       treeSelectData.value = Tool.copy(level1.value);
       setDisable(treeSelectData.value, record.id);
+
       // 为选择树添加一个"无"
       // unshift往数组前面插入值
       treeSelectData.value.unshift({id: 0, name: '无'});
-      setTimeout(function () {
-        editor.create();
-      }, 100);
     };
+
     /**
      * 新增
      */
@@ -295,13 +293,12 @@ export default defineComponent({
       };
 
       treeSelectData.value = Tool.copy(level1.value);
+
       // 为选择树添加一个"无"
       // unshift往数组前面插入值
       treeSelectData.value.unshift({id: 0, name: '无'});
-      setTimeout(function () {
-        editor.create();
-      }, 100);
     };
+
     /**
      * 删除
      */
@@ -310,6 +307,7 @@ export default defineComponent({
       deleteIds.length = 0;
       deleteNames.length = 0;
       getDeleteIds(level1.value, id);
+
       Modal.confirm({
         title: '重要提醒',
         icon: createVNode(ExclamationCircleOutlined),
@@ -325,9 +323,13 @@ export default defineComponent({
         },
       });
     };
+
     onMounted(() => {
       handleQuery();
+
+      editor.create();
     });
+
     return {
       param,
       // docs,
@@ -335,13 +337,16 @@ export default defineComponent({
       columns,
       loading,
       handleQuery,
+
       edit,
       add,
+
       doc,
       modalVisible,
       modalLoading,
-      handleModalOk,
+      handleSave,
       handleDelete,
+
       treeSelectData
     }
   }
