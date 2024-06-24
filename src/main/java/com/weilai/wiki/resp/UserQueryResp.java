@@ -1,6 +1,6 @@
-package com.weilai.wiki.domain;
+package com.weilai.wiki.resp;
 
-public class User {
+public class UserQueryResp {
     private Long id;
 
     private String loginName;
