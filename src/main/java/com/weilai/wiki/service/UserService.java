@@ -4,6 +4,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.weilai.wiki.domain.User;
 import com.weilai.wiki.domain.UserExample;
+import com.weilai.wiki.exception.BusinessException;
+import com.weilai.wiki.exception.BusinessExceptionCode;
 import com.weilai.wiki.mapper.UserMapper;
 import com.weilai.wiki.req.UserQueryReq;
 import com.weilai.wiki.req.UserSaveReq;
@@ -13,6 +15,7 @@ import com.weilai.wiki.util.CopyUtil;
 import com.weilai.wiki.util.SnowFlake;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,9 +72,15 @@ public class UserService {
     public void save(UserSaveReq req) {
         User user = CopyUtil.copy(req, User.class);
         if (ObjectUtils.isEmpty(req.getId())) {
-            // 新增
-            user.setId(snowFlake.nextId());
-            userMapper.insert(user);
+            User userDB = selectByLoginName(req.getLoginName());
+            if (ObjectUtils.isEmpty(userDB)) {
+                // 新增
+                user.setId(snowFlake.nextId());
+                userMapper.insert(user);
+            } else {
+                // 用户名已存在
+                throw new BusinessException(BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
+            }
         } else {
             // 更新
             userMapper.updateByPrimaryKey(user);
@@ -80,5 +89,17 @@ public class UserService {
 
     public void delete(Long id) {
         userMapper.deleteByPrimaryKey(id);
+    }
+
+    public User selectByLoginName(String loginName) {
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        criteria.andLoginNameEqualTo(loginName);
+        List<User> userList = userMapper.selectByExample(userExample);
+        if (CollectionUtils.isEmpty(userList)) {
+            return null;
+        } else {
+            return userList.get(0);
+        }
     }
 }
