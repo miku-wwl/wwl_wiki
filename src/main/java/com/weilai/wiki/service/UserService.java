@@ -8,6 +8,7 @@ import com.weilai.wiki.exception.BusinessException;
 import com.weilai.wiki.exception.BusinessExceptionCode;
 import com.weilai.wiki.mapper.UserMapper;
 import com.weilai.wiki.req.UserQueryReq;
+import com.weilai.wiki.req.UserResetPasswordReq;
 import com.weilai.wiki.req.UserSaveReq;
 import com.weilai.wiki.resp.PageResp;
 import com.weilai.wiki.resp.UserQueryResp;
@@ -103,5 +104,13 @@ public class UserService {
         } else {
             return userList.get(0);
         }
+    }
+
+    /**
+     * 修改密码
+     */
+    public void resetPassword(UserResetPasswordReq req) {
+        User user = CopyUtil.copy(req, User.class);
+        userMapper.updateByPrimaryKeySelective(user);
     }
 }
