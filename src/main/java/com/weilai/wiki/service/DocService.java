@@ -7,6 +7,7 @@ import com.weilai.wiki.domain.Doc;
 import com.weilai.wiki.domain.DocExample;
 import com.weilai.wiki.mapper.ContentMapper;
 import com.weilai.wiki.mapper.DocMapper;
+import com.weilai.wiki.mapper.DocMapperCust;
 import com.weilai.wiki.req.DocQueryReq;
 import com.weilai.wiki.req.DocSaveReq;
 import com.weilai.wiki.resp.DocQueryResp;
@@ -32,6 +33,9 @@ public class DocService {
 
     @Resource
     private ContentMapper contentMapper;
+
+    @Resource
+    private DocMapperCust docMapperCust;
 
     @Resource
     private SnowFlake snowFlake;
@@ -133,6 +137,8 @@ public class DocService {
      */
     public String findContent(@PathVariable Long id) {
         Content content = contentMapper.selectByPrimaryKey(id);
+        // 文档阅读数+1
+        docMapperCust.increaseViewCount(id);
         if (!ObjectUtils.isEmpty(content)) {
             return content.getContent();
         } else {
