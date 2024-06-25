@@ -1,10 +1,12 @@
 package com.weilai.wiki.controller;
 
+import com.weilai.wiki.req.UserLoginReq;
 import com.weilai.wiki.req.UserQueryReq;
 import com.weilai.wiki.req.UserResetPasswordReq;
 import com.weilai.wiki.req.UserSaveReq;
 import com.weilai.wiki.resp.CommonResp;
 import com.weilai.wiki.resp.PageResp;
+import com.weilai.wiki.resp.UserLoginResp;
 import com.weilai.wiki.resp.UserQueryResp;
 import com.weilai.wiki.service.UserService;
 import jakarta.annotation.Resource;
@@ -48,6 +50,15 @@ public class UserController {
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp resp = new CommonResp<>();
         userService.resetPassword(req);
+        return resp;
+    }
+
+    @PostMapping("/login")
+    public CommonResp login(@Valid @RequestBody UserLoginReq req) {
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp<UserLoginResp> resp = new CommonResp<>();
+        UserLoginResp userLoginResp = userService.login(req);
+        resp.setContent(userLoginResp);
         return resp;
     }
 }
