@@ -5,6 +5,8 @@ import com.github.pagehelper.PageInfo;
 import com.weilai.wiki.domain.Content;
 import com.weilai.wiki.domain.Doc;
 import com.weilai.wiki.domain.DocExample;
+import com.weilai.wiki.exception.BusinessException;
+import com.weilai.wiki.exception.BusinessExceptionCode;
 import com.weilai.wiki.mapper.ContentMapper;
 import com.weilai.wiki.mapper.DocMapper;
 import com.weilai.wiki.mapper.DocMapperCust;
@@ -13,6 +15,8 @@ import com.weilai.wiki.req.DocSaveReq;
 import com.weilai.wiki.resp.DocQueryResp;
 import com.weilai.wiki.resp.PageResp;
 import com.weilai.wiki.util.CopyUtil;
+import com.weilai.wiki.util.RedisUtil;
+import com.weilai.wiki.util.RequestContext;
 import com.weilai.wiki.util.SnowFlake;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
@@ -40,6 +44,8 @@ public class DocService {
     @Resource
     private SnowFlake snowFlake;
 
+    @Resource
+    public RedisUtil redisUtil;
     /**
      * 查询文档基本信息
      */
@@ -151,6 +157,13 @@ public class DocService {
      * 点赞
      */
     public void vote(Long id) {
-        docMapperCust.increaseVoteCount(id);
+        // docMapperCust.increaseVoteCount(id);
+        // 远程IP+doc.id作为key，24小时内不能重复
+        String ip = RequestContext.getRemoteAddr();
+        if (redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 3600 * 24)) {
+            docMapperCust.increaseVoteCount(id);
+        } else {
+            throw new BusinessException(BusinessExceptionCode.VOTE_REPEATED);
+        }
     }
 }
