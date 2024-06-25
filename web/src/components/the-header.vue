@@ -61,6 +61,7 @@
   import axios from 'axios';
   import {message} from 'ant-design-vue';
   import store from "@/store";
+  import router from "@/router";
   declare let hexMd5: any;
   declare let KEY: any;
 
@@ -105,6 +106,8 @@
           if (data.success) {
             message.success("退出登录成功！");
             store.commit("setUser", {});
+            // 退出登录后跳回到首页
+            router.push('/');
           } else {
             message.error(data.message);
           }
