@@ -2,8 +2,10 @@ package com.weilai.wiki.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.weilai.wiki.domain.DocExample;
 import com.weilai.wiki.domain.Ebook;
 import com.weilai.wiki.domain.EbookExample;
+import com.weilai.wiki.mapper.DocMapper;
 import com.weilai.wiki.mapper.EbookMapper;
 import com.weilai.wiki.req.EbookQueryReq;
 import com.weilai.wiki.req.EbookSaveReq;
@@ -26,6 +28,9 @@ public class EbookService {
 
     @Resource
     private EbookMapper ebookMapper;
+
+    @Resource
+    private DocMapper docMapper;
 
     @Resource
     private SnowFlake snowFlake;
@@ -83,6 +88,11 @@ public class EbookService {
      * 删除
      */
     public void delete(Long id) {
+        // 删除电子书前先删除其关联的所有文档
+        DocExample docExample = new DocExample();
+        DocExample.Criteria criteria = docExample.createCriteria();
+        criteria.andEbookIdEqualTo(id);
+        docMapper.deleteByExample(docExample);
         ebookMapper.deleteByPrimaryKey(id);
     }
 }
