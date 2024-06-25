@@ -1,6 +1,6 @@
 <template>
     <a-layout-footer style="text-align: center">
-      Weilai Wiki，欢迎：{{ user.name }}
+      Weilai Wiki<span v-show="user.id">，欢迎：{{ user.name }}</span>
     </a-layout-footer>
   </template>
   
@@ -10,7 +10,7 @@
   export default defineComponent({
     name: 'the-footer',
     setup() {
-      const user = computed(() => store.state.user)
+      const user = computed(() => store.state.user);
       return {
         user
       }
