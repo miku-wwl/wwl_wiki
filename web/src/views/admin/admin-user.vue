@@ -67,7 +67,7 @@
           <a-input v-model:value="user.name" />
         </a-form-item>
         <a-form-item label="密码" v-show="!user.id">
-          <a-input v-model:value="user.password" />
+          <a-input v-model:value="user.password" type="password" autocomplete="off"/>
         </a-form-item>
       </a-form>
     </a-modal>
@@ -77,9 +77,12 @@
       :confirm-loading="resetModalLoading"
       @ok="handleResetModalOk"
   >
-      <a-form :model="user" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+      <a-form
+          :model="user"
+          :label-col="{ span: 6 }"
+          :wrapper-col="{ span: 18 }">
         <a-form-item label="新密码">
-          <a-input v-model:value="user.password"/>
+          <a-input v-model:value="user.password" type="password" autocomplete="off"/>
         </a-form-item>
       </a-form>
     </a-modal>
