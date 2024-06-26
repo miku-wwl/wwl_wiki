@@ -152,14 +152,15 @@ public class DocService {
     /**
      * 查询文档内容
      */
-    public String findContent(@PathVariable Long id) {
+    public String findContent(Long id) {
         Content content = contentMapper.selectByPrimaryKey(id);
         // 文档阅读数+1
         docMapperCust.increaseViewCount(id);
         if (!ObjectUtils.isEmpty(content)) {
             return content.getContent();
         } else {
-            LOG.error("id为 {} 的文档content为空！", id);
+            Doc docDb = docMapper.selectByPrimaryKey(id);
+            LOG.warn("【{}】内容为空！", docDb.getName());
         }
         return "";
     }
