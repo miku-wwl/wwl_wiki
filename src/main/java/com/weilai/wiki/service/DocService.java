@@ -18,6 +18,7 @@ import com.weilai.wiki.util.CopyUtil;
 import com.weilai.wiki.util.RedisUtil;
 import com.weilai.wiki.util.RequestContext;
 import com.weilai.wiki.util.SnowFlake;
+import com.weilai.wiki.websocket.WebSocketServer;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,10 @@ public class DocService {
 
     @Resource
     public RedisUtil redisUtil;
+
+    @Resource
+    public WebSocketServer webSocketServer;
+
     /**
      * 查询文档基本信息
      */
@@ -165,6 +170,9 @@ public class DocService {
         } else {
             throw new BusinessException(BusinessExceptionCode.VOTE_REPEATED);
         }
+        // 推送消息
+        Doc docDb = docMapper.selectByPrimaryKey(id);
+        webSocketServer.sendInfo("【" + docDb.getName() + "】被点赞！");
     }
 
     /**
