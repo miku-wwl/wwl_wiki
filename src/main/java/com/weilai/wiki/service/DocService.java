@@ -49,6 +49,9 @@ public class DocService {
     public RedisUtil redisUtil;
 
     @Resource
+    public WsService wsService;
+
+    @Resource
     public WebSocketServer webSocketServer;
 
     /**
@@ -172,7 +175,7 @@ public class DocService {
         }
         // 推送消息
         Doc docDb = docMapper.selectByPrimaryKey(id);
-        webSocketServer.sendInfo("【" + docDb.getName() + "】被点赞！");
+        wsService.sendInfo("【" + docDb.getName() + "】被点赞！");
     }
 
     /**
