@@ -57,8 +57,8 @@ public class DocService {
     @Resource
     public WebSocketServer webSocketServer;
 
-    @Resource
-    private RocketMQTemplate rocketMQTemplate;
+//    @Resource
+//    private RocketMQTemplate rocketMQTemplate;
 
     /**
      * 查询文档基本信息
@@ -184,8 +184,8 @@ public class DocService {
         // 推送消息
         Doc docDb = docMapper.selectByPrimaryKey(id);
         String logId = MDC.get("LOG_ID");
-        // wsService.sendInfo("【" + docDb.getName() + "】被点赞！", logId);
-        rocketMQTemplate.convertAndSend("VOTE_TOPIC", "【" + docDb.getName() + "】被点赞！");
+        wsService.sendInfo("【" + docDb.getName() + "】被点赞！", logId);
+//        rocketMQTemplate.convertAndSend("VOTE_TOPIC", "【" + docDb.getName() + "】被点赞！");
     }
 
     /**
